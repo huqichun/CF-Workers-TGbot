@@ -56,7 +56,8 @@ export default {
                 if (url.pathname.includes('/bot')) {
                     newUrl = 'https://api.telegram.org' + url.pathname + url.search;
                 } else {
-                    newUrl = `https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage` + url.search;
+                    // 保持原始路径，只添加bot token前缀
+                    newUrl = `https://api.telegram.org/bot${TELEGRAM_TOKEN}${url.pathname}` + url.search;
                 }
             }
         } else {
@@ -92,6 +93,15 @@ class MessageSender {
         return this.api.sendMessage({
             chat_id: this.context.chat_id,
             text: text,
+            parse_mode: parseMode
+        });
+    }
+
+    sendDocument(document, caption = null, parseMode = null) {
+        return this.api.sendDocument({
+            chat_id: this.context.chat_id,
+            document: document,
+            caption: caption,
             parse_mode: parseMode
         });
     }
@@ -175,6 +185,13 @@ function createTelegramBotAPI(token) {
     return {
         sendMessage: (params) => {
             return fetch(`${baseURL}/bot${token}/sendMessage`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(params)
+            });
+        },
+        sendDocument: (params) => {
+            return fetch(`${baseURL}/bot${token}/sendDocument`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(params)
