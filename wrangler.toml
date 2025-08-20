@@ -1,4 +1,5 @@
-name = "workers-tgbot"
+name = "tg"
 main = "_worker.js"
 compatibility_date = "2025-07-19"
+
 keep_vars = true
